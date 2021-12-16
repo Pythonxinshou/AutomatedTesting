@@ -8,14 +8,15 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.relative_locator import locate_with
 from selenium.webdriver.support.wait import WebDriverWait
-from Web_Keys.options_web.chrome_options import ChromeOptions
+from Web_Keys.options_web.chrome_options import options
 
 
-def open_browser(type_):
-    if type_ == 'Chrome':
-        driver = webdriver.Chrome(options=ChromeOptions().options())
+def open_browser(text):
+    if text == 'Chrome':
+        # driver = webdriver.Chrome(options=options())
+        driver = webdriver.Chrome()
         try:
-            driver = getattr(webdriver, type_)()
+            driver = getattr(webdriver, text)()
         except Exception as e:
             print(e)
             driver = webdriver.Chrome()
@@ -23,14 +24,14 @@ def open_browser(type_):
 
 
 class Keys:
-    def __init__(self, type_):
-        self.driver = open_browser(type_)
+    def __init__(self, text):
+        self.driver = open_browser(text)
         # 隐式等待
         self.driver.implicitly_wait(10)
 
     # 访问url
-    def open(self, url):
-        self.driver.get(url)
+    def open(self, text):
+        self.driver.get(text)
 
     # 查找元素
     def locate(self, name, value):
@@ -56,8 +57,8 @@ class Keys:
 
     # 强制等待
     @staticmethod
-    def wait(time_):
-        sleep(time_)
+    def wait(text):
+        sleep(text)
 
     # 切换Iframe
     def switch_frame(self, value, name=None):
@@ -95,15 +96,15 @@ class Keys:
 
     # 断言文本信息:可以捕获异常进行处理，也可以不捕获，因为报错就相当于断言失败。
     def assert_text(self, name, value, expect):
-        # try:
-        #     reality = self.locate(name, value).text
-        #     assert expect == reality, '断言失败，实际结果为:{}'.format(reality)
-        #     return True
-        # except Exception as e:
-        #     print('断言失败信息:' + str(e))
-        #     return False
-        reality = self.locate(name, value).text
-        assert expect == reality, '断言失败，实际结果为:}'.format(reality)
+        try:
+            reality = self.locate(name, value).text
+            assert expect == reality, '断言失败，实际结果为:{}'.format(reality)
+            return True
+        except Exception as e:
+            print('断言失败信息:' + str(e))
+            return False
+        # reality = self.locate(name, value).text
+        # assert expect == reality, '断言失败，实际结果为:}'.format(reality)
 
     # 关闭当前句柄
     def close(self):
